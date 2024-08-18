@@ -1,7 +1,8 @@
 import pandas as pd
 
-# Cargar el dataset
 df_airbnb = pd.read_csv("./data/airbnb.csv")
+
+######## Ejercicio 1 - Realizar un analisis exploratorio de los datos
 
 # Ver las primeras filas del dataset
 print(df_airbnb.head())
@@ -21,8 +22,10 @@ print(df_airbnb.info())
 # Verificar si hay valores nulos
 print(df_airbnb.isnull().sum())
 
+######## Ejercicio 2 - Realizar Filtrados a Datos
+
 ##### Caso 1: Alicia y su familia
-# Filtrado de propiedades que cumplan con las condiciones
+# Cumplir con las condiciones
 df_alicia = df_airbnb[(df_airbnb['reviews'] > 10) & (df_airbnb['overall_satisfaction'] > 4)]
 
 # Ordenar por puntuación y luego por número de críticas
@@ -31,7 +34,9 @@ df_alicia = df_alicia.sort_values(by=['overall_satisfaction', 'reviews'], ascend
 # Mostrar las 3 mejores opciones
 print(df_alicia.head(3))
 
+
 ##### Caso 2: Roberto y Clara
+
 # IDs de las propiedades de Roberto y Clara
 roberto_id = 97503
 clara_id = 90387
@@ -42,12 +47,11 @@ df_roberto_clara = df_airbnb[(df_airbnb['room_id'] == roberto_id) | (df_airbnb['
 # Guardar el resultado en un archivo Excel
 df_roberto_clara.to_excel("roberto.xls", index=False)
 
-# Mostrar el dataframe resultante
 print(df_roberto_clara)
 
 ##### Caso 3: Diana y su presupuesto
 
-# Filtrado de propiedades con un precio menor o igual a 50€
+# Filtrar las propiedades con un precio menor o igual a 50€
 df_diana = df_airbnb[df_airbnb['price'] <= 50]
 
 # Dar preferencia a las habitaciones compartidas
@@ -64,5 +68,35 @@ if len(df_shared_rooms) < 10:
 else:
     df_diana_final = df_shared_rooms.head(10)
 
-# Mostrar las 10 opciones más baratas
 print(df_diana_final)
+
+
+######## Ejercicio 3 - Realizar Agrupamientos de Datos
+
+# Agrupamiento 1: Precio promedio por vecindario
+precio_promedio_vecindario = df_airbnb.groupby('neighborhood')['price'].mean().reset_index()
+precio_promedio_vecindario = precio_promedio_vecindario.sort_values(by='price', ascending=False)
+print(precio_promedio_vecindario)
+
+# Agrupamiento 2: Número de alojamientos por tipo de propiedad
+alojamientos_por_tipo = df_airbnb.groupby('room_type').size().reset_index(name='count')
+print(alojamientos_por_tipo)
+
+import matplotlib.pyplot as plt
+import seaborn as sns
+
+# Gráfico del precio promedio por vecindario
+plt.figure(figsize=(10, 6))
+sns.barplot(x='price', y='neighborhood', data=precio_promedio_vecindario, palette='viridis')
+plt.title('Precio Promedio por Vecindario en Lisboa')
+plt.xlabel('Precio Promedio (€)')
+plt.ylabel('Vecindario')
+plt.show()
+
+# Gráfico del número de alojamientos por tipo de propiedad
+plt.figure(figsize=(8, 6))
+sns.barplot(x='room_type', y='count', data=alojamientos_por_tipo, palette='muted')
+plt.title('Número de Alojamientos por Tipo de Propiedad')
+plt.xlabel('Tipo de Propiedad')
+plt.ylabel('Número de Alojamientos')
+plt.show()

@@ -2,13 +2,13 @@ import pandas as pd
 import sqlite3
 from pymongo import MongoClient
 
-# Paso 1: Cargar el dataset y explorar el dataframe
+# Cargar el dataset y explorar el dataframe
 df = pd.read_csv('winemag-data-130k-v2.csv')
 print(df.head())
 print(df.info())
 print(df.describe())
 
-# Paso 2: Renombrar columnas
+# Renombrar columnas
 df.rename(columns={
     'country': 'pais',
     'points': 'puntos',
@@ -34,7 +34,9 @@ df['rango_precio'] = pd.cut(df['precio'], bins=[0, 20, 50, 100, 500], labels=['B
 # 3. Crear una columna "calidad" según los puntos
 df['calidad'] = pd.cut(df['puntos'], bins=[0, 85, 90, 95, 100], labels=['Regular', 'Buena', 'Muy Buena', 'Excelente'])
 
-# Paso 3: Generar reportes
+
+
+# Generar reportes
 
 # Reporte 1: Promedio de precio por continente
 reporte1 = df.groupby('continente')['precio'].mean().reset_index()
@@ -60,7 +62,7 @@ collection.insert_many(reporte4.to_dict('records'))
 
 print("Reportes generados y guardados en diversos formatos.")
 
-# Paso 4: Enviar uno de los reportes por correo (simulado aquí con un print)
+# Enviar uno de los reportes por correo (simulado aquí con un print)
 # Ejemplo para enviar el reporte1 por correo
 import smtplib
 from email.mime.text import MIMEText
